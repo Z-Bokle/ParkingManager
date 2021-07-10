@@ -1,5 +1,8 @@
 // JavaScript source code
 
+
+
+
 var BroHeight = document.documentElement.clientHeight;
 var BroWidth = document.documentElement.clientWidth;
 
@@ -18,11 +21,11 @@ var config = {
     scene: {
         preload: preload,
         create: create,
-        update: update,
+        update: update
     }
 }
 var game = new Phaser.Game(config);
-var people;
+var people0,people1,people2,people3;
 
 function preload() {
 
@@ -39,7 +42,7 @@ function preload() {
     this.load.image('c6', './images/c6.png');
     this.load.image('c7', './images/c7.png');
     this.load.image('c8', './images/c8.png');
-
+    
 }
 
 var posx0, posy0, posx1, posy1, posx2, posy2, posx3, posy3;
@@ -49,11 +52,9 @@ function create() {
 
     posx0 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
     posy0 = 320 + 170 * (Math.round(Math.random() * 1000) / 500 - 1);
-    people=this.physics.add.sprite(posx0, posy0, 'p0');
+    people0=this.add.sprite(posx0, posy0, 'p0'); 
 
-    //alert("posx0=" + posx0 + ",posy0=" + posy0);
-
-
+    //透明按钮和人重合
 
     posx1 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
     posy1 = 320 + 170 * (Math.round(Math.random() * 1000) / 500 - 1);
@@ -62,7 +63,7 @@ function create() {
         posx1 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
         posy1 = 320 + 170 * (Math.round(Math.random() * 1000) / 500 - 1);
     }
-    this.add.sprite(posx1, posy1, 'p1');
+    people1=this.add.sprite(posx1, posy1, 'p1');
     posx2 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
     posy2 = 320 + 170 * (Math.round(Math.random() * 1000) / 500 - 1);
     while (abs(posx2 - posx0) <= 75 && abs(posy2 - posy0) <= 75
@@ -74,7 +75,7 @@ function create() {
 
     //alert("posx2=" + posx2+",posy2="+posy2);
 
-    this.add.sprite(posx2, posy2, 'p2');
+    people2=this.add.sprite(posx2, posy2, 'p2');
     posx3 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
     posy3 = 320 + 170 * (Math.round(Math.random() * 1000) / 500 - 1);
     while (abs(posx3 - posx0) <= 75 && abs(posy3 - posy0) <= 75
@@ -84,12 +85,11 @@ function create() {
         posx3 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
         posy3 = 320 + 170 * (Math.round(Math.random() * 1000) / 500 - 1);
     }
-    this.add.sprite(posx3, posy3, 'p3');
+    people3=this.add.sprite(posx3, posy3, 'p3');
  
     //var pos0 = { x: posx0, y: posy0 }, pos1 = { x: posx1, y: posy1 }, pos2 = { x: posx2, y: posy2 }, pos3 = { x: posx3, y: posy3 };
     
 }
-function update() {
-    if (cursors.left.isDown)
-        people.setVelocityX(-160);
+function update(time,delta) {
+    people0.x += 1;//这里写每个精灵对象的位置操作 在很小的时间间隔内执行一次这个函数
 }
