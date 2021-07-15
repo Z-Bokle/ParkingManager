@@ -69,13 +69,20 @@ function preload() {
     this.load.image('c7', './images/c7.png');
     this.load.image('c8', './images/c8.png');
 
-    this.load.image('butp', './images/buttonp.png');
-    this.load.image('butc', './images/buttonc.png');
+    //this.load.image('butp', './images/buttonp.png');
+    //this.load.image('butc', './images/buttonc.png');
+
+    this.load.image('but1', './images/button1.png');
+    this.load.image('but2', './images/button2.png');
+    this.load.image('ptr', './images/pointer.png');
+
+    this.load.audio('bgm', ['./sounds/bgm.mp3','./sounds/bgm.ogg']);
 }
 
 var posx0, posy0, posx1, posy1, posx2, posy2, posx3, posy3,
     carx1, cary1, carx2, cary2, carx3, cary3, carx4, cary4;
-
+var bgm, button1, button2, ptr;
+var enabled = true;
 let direction = [ 0, 0, 0, 0, 0, 0, 0, 0];
 //分别为p0,p1,p2,p3,c1,c2,c3,c4的方向 默认为0 朝上
 
@@ -90,22 +97,20 @@ function create() {
     //用random函数生成四个随机方向，用于确定精灵对象的方向
     for (let i = 0; i < 8; i++) {
         reset_direction(i);
-        //console.log(direction[i]);
-    }
-    /*
-    this.input.onDown.add(function (pointer) {
-       
-    });
-    */
+    }//初始化对象方向
 
 
+    button1 = this.add.sprite(25, 25, 'but1');
+    button2 = this.add.sprite(25, 25, 'but2');
+    button2.visible = false;
+    music = this.sound.add('bgm');
+    music.play();
     posx0 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
     posy0 = 320 + 170 * (Math.round(Math.random() * 1000) / 500 - 1);
     people0=this.add.sprite(posx0, posy0, 'p0'); 
     update_direction(0);
     //buttons[0] = this.add.button(posx0, posy0, 'butp', function () { movable[0] = true; }, this, 0, 0, 0, 0);
-    //设置透明按钮和人重合
-    //车同理
+
     posx1 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
     posy1 = 320 + 170 * (Math.round(Math.random() * 1000) / 500 - 1);
     while (abs(posx1 - posx0) <= 75 && abs(posy1 - posy0) <= 75)
@@ -210,49 +215,358 @@ function create() {
     //buttons[7] = this.add.button(carx4, cary4, 'butc', function () { movable[7] = true; }, this, 0, 0, 0, 0);
     //buttons[7].angle = direction[7];
 
+    //ptr = this.add.sprite(480, 320, 'ptr');
+    
 }
 
- 
+
 
 function update(time, delta) {
     var pointer = this.input.activePointer;
-    var x = pointer.worldX,y = pointer.worldY;
-    if (pointer.isDown) {//监听鼠标的点击，同时判断出鼠标点击的对象
-        if (abs(x - people0.x) < people0.width / 2 && abs(y - people0.y) < people0.height / 2)
-            movable[0] = true;
-        if (abs(x - people1.x) < people1.width / 2 && abs(y - people1.y) < people1.height / 2)
-            movable[1] = true;
-        if (abs(x - people2.x) < people2.width / 2 && abs(y - people2.y) < people2.height / 2)
-            movable[2] = true;
-        if (abs(x - people3.x) < people3.width / 2 && abs(y - people3.y) < people3.height / 2)
-            movable[3] = true;
-        if (abs(x - car1.x) < car1.width / 2 && abs(y - car1.y) < car1.height / 2)
-            movable[4] = true;
-        if (abs(x - car2.x) < car2.width / 2 && abs(y - car2.y) < car2.height / 2)
-            movable[5] = true;
-        if (abs(x - car3.x) < car3.width / 2 && abs(y - car3.y) < car3.height / 2)
-            movable[6] = true;
-        if (abs(x - car4.x) < car4.width / 2 && abs(y - car4.y) < car4.height / 2)
-            movable[7] = true;
+    var x = pointer.worldX, y = pointer.worldY;
+    /*
+    this.input.on('pointerdown', function (pointer) {
+        this.input.mouse.requestPointerLock();
+        button1.visible = true;
+        button2.visible = false;
+        music.play();
+        console.log('2222');
+        enabled = true;
+    }, this);//点击解锁游戏
+
+    this.input.keyboard.on('keydown-Q', function (event) {
+        if (this.input.mouse.locked) {
+            this.input.mouse.releasePointerLock();
+            music.pause();
+            button2.visible = true;
+            button1.visible = false;
+            console.log('1111');
+            enabled = false;
+        }
+    }, this);//Q暂停游戏(还有问题)
+
+
+        if (this.input.mouse.locked) {
+            ptr.x += pointer.movementX;
+            ptr.y += pointer.movementY;
+
+            ptr.x = Phaser.Math.Wrap(ptr.x, 0, game.renderer.width);
+            ptr.y = Phaser.Math.Wrap(ptr.y, 0, game.renderer.height);
+
+            if (pointer.movementX > 0) { ptr.setRotation(0.1); }
+            else if (pointer.movementX < 0) { ptr.setRotation(-0.1); }
+            else { ptr.setRotation(0); }
+        }//光标跟随和边界循环处理
+    */
+
+
+    if (enabled == true) {//未处于暂停状态
+
+        if (pointer.isDown) {//监听鼠标的点击，同时判断出鼠标点击的对象
+            if (abs(x - people0.x) < people0.width / 2 && abs(y - people0.y) < people0.height / 2)
+                movable[0] = true;
+            if (abs(x - people1.x) < people1.width / 2 && abs(y - people1.y) < people1.height / 2)
+                movable[1] = true;
+            if (abs(x - people2.x) < people2.width / 2 && abs(y - people2.y) < people2.height / 2)
+                movable[2] = true;
+            if (abs(x - people3.x) < people3.width / 2 && abs(y - people3.y) < people3.height / 2)
+                movable[3] = true;
+            if (abs(x - car1.x) < car1.width / 2 && abs(y - car1.y) < car1.height / 2)
+                movable[4] = true;
+            if (abs(x - car2.x) < car2.width / 2 && abs(y - car2.y) < car2.height / 2)
+                movable[5] = true;
+            if (abs(x - car3.x) < car3.width / 2 && abs(y - car3.y) < car3.height / 2)
+                movable[6] = true;
+            if (abs(x - car4.x) < car4.width / 2 && abs(y - car4.y) < car4.height / 2)
+                movable[7] = true;
+        }
+
+        //people1.x += 0;//这里写每个精灵对象的位置操作 在很小的时间间隔内执行一次这个函数
+
+        const MoveSpeed = 3;//默认移动速度为3
+        //people0
+        if (movable[0]) {//若处于运动状态，则根据方向进行运动
+            if (direction[0] == 0) people0.y -= MoveSpeed;
+            if (direction[0] == 90) people0.x += MoveSpeed;
+            if (direction[0] == 180) people0.y += MoveSpeed;
+            if (direction[0] == 270) people0.x -= MoveSpeed;
+        }
+
+        if (people0.x <= 85) {
+            direction[0] += 90;
+            direction[0] %= 360;
+            update_direction(0);//更新当前对象（第0个）朝向
+            people0.x += 4;
+        }
+
+        if (people0.x >= 875) {
+            direction[0] += 90;
+            direction[0] %= 360;
+            update_direction(0);
+            people0.x -= 4;
+        }
+
+        if (people0.y <= 80) {
+            direction[0] += 90;
+            direction[0] %= 360;
+            update_direction(0);
+            people0.y += 4;
+        }
+
+        if (people0.y >= 560) {
+            direction[0] += 90;
+            direction[0] %= 360;
+            update_direction(0);
+            people0.y -= 4;
+        }
+        //people1
+        if (movable[1]) {//若处于运动状态，则根据方向进行运动
+            if (direction[1] == 0) people1.y -= MoveSpeed;
+            if (direction[1] == 90) people1.x += MoveSpeed;
+            if (direction[1] == 180) people1.y += MoveSpeed;
+            if (direction[1] == 270) people1.x -= MoveSpeed;
+        }
+
+        if (people1.x <= 85) {
+            direction[1] += 90;
+            direction[1] %= 360;
+            update_direction(1);//更新当前对象（第1个）朝向
+            people1.x += 4;
+        }
+
+        if (people1.x >= 875) {
+            direction[1] += 90;
+            direction[1] %= 360;
+            update_direction(1);
+            people1.x -= 4;
+        }
+
+        if (people1.y <= 80) {
+            direction[1] += 90;
+            direction[1] %= 360;
+            update_direction(1);
+            people1.y += 4;
+        }
+
+        if (people1.y >= 560) {
+            direction[1] += 90;
+            direction[1] %= 360;
+            update_direction(1);
+            people1.y -= 4;
+        }
+        //people2
+        if (movable[2]) {//若处于运动状态，则根据方向进行运动
+            if (direction[2] == 0) people2.y -= MoveSpeed;
+            if (direction[2] == 90) people2.x += MoveSpeed;
+            if (direction[2] == 180) people2.y += MoveSpeed;
+            if (direction[2] == 270) people2.x -= MoveSpeed;
+        }
+
+        if (people2.x <= 85) {
+            direction[2] += 90;
+            direction[2] %= 360;
+            update_direction(2);//更新当前对象（第2个）朝向
+            people2.x += 4;
+        }
+
+        if (people2.x >= 875) {
+            direction[2] += 90;
+            direction[2] %= 360;
+            update_direction(2);
+            people2.x -= 4;
+        }
+
+        if (people2.y <= 80) {
+            direction[2] += 90;
+            direction[2] %= 360;
+            update_direction(2);
+            people2.y += 4;
+        }
+
+        if (people2.y >= 560) {
+            direction[2] += 90;
+            direction[2] %= 360;
+            update_direction(2);
+            people2.y -= 4;
+        }
+        //people3
+        if (movable[3]) {//若处于运动状态，则根据方向进行运动
+            if (direction[3] == 0) people3.y -= MoveSpeed;
+            if (direction[3] == 90) people3.x += MoveSpeed;
+            if (direction[3] == 180) people3.y += MoveSpeed;
+            if (direction[3] == 270) people3.x -= MoveSpeed;
+        }
+
+        if (people3.x <= 85) {
+            direction[3] += 90;
+            direction[3] %= 360;
+            update_direction(3);//更新当前对象（第4个）朝向
+            people3.x += 4;
+        }
+
+        if (people3.x >= 875) {
+            direction[3] += 90;
+            direction[3] %= 360;
+            update_direction(3);
+            people3.x -= 4;
+        }
+
+        if (people3.y <= 80) {
+            direction[3] += 90;
+            direction[3] %= 360;
+            update_direction(3);
+            people3.y += 4;
+        }
+
+        if (people3.y >= 560) {
+            direction[3] += 90;
+            direction[3] %= 360;
+            update_direction(3);
+            people3.y -= 4;
+        }
+        //car1
+        if (movable[4]) {//若处于运动状态，则根据方向进行运动
+            if (direction[4] == 0) car1.y -= MoveSpeed;
+            if (direction[4] == 90) car1.x += MoveSpeed;
+            if (direction[4] == 180) car1.y += MoveSpeed;
+            if (direction[4] == 270) car1.x -= MoveSpeed;
+        }
+
+        if (car1.x <= 85) {
+            direction[4] += 90;
+            direction[4] %= 360;
+            update_direction(4);//更新当前对象（第5个）朝向
+            car1.x += 4;
+        }
+
+        if (car1.x >= 875) {
+            direction[4] += 90;
+            direction[4] %= 360;
+            update_direction(4);
+            car1.x -= 4;
+        }
+
+        if (car1.y <= 80) {
+            direction[4] += 90;
+            direction[4] %= 360;
+            update_direction(4);
+            car1.y += 4;
+        }
+
+        if (car1.y >= 560) {
+            direction[4] += 90;
+            direction[4] %= 360;
+            update_direction(4);
+            car1.y -= 4;
+        }
+        //car2
+        if (movable[5]) {//若处于运动状态，则根据方向进行运动
+            if (direction[5] == 0) car2.y -= MoveSpeed;
+            if (direction[5] == 90) car2.x += MoveSpeed;
+            if (direction[5] == 180) car2.y += MoveSpeed;
+            if (direction[5] == 270) car2.x -= MoveSpeed;
+        }
+
+        if (car2.x <= 85) {
+            direction[5] += 90;
+            direction[5] %= 360;
+            update_direction(5);//更新当前对象（第6个）朝向
+            car2.x += 4;
+        }
+
+        if (car2.x >= 875) {
+            direction[5] += 90;
+            direction[5] %= 360;
+            update_direction(5);
+            car2.x -= 4;
+        }
+
+        if (car2.y <= 80) {
+            direction[5] += 90;
+            direction[5] %= 360;
+            update_direction(5);
+            car2.y += 4;
+        }
+
+        if (car2.y >= 560) {
+            direction[5] += 90;
+            direction[5] %= 360;
+            update_direction(5);
+            car2.y -= 4;
+        }
+        //car3
+        if (movable[6]) {//若处于运动状态，则根据方向进行运动
+            if (direction[6] == 0) car3.y -= MoveSpeed;
+            if (direction[6] == 90) car3.x += MoveSpeed;
+            if (direction[6] == 180) car3.y += MoveSpeed;
+            if (direction[6] == 270) car3.x -= MoveSpeed;
+        }
+
+        if (car3.x <= 85) {
+            direction[6] += 90;
+            direction[6] %= 360;
+            update_direction(6);//更新当前对象（第7个）朝向
+            car3.x += 4;
+        }
+
+        if (car3.x >= 875) {
+            direction[6] += 90;
+            direction[6] %= 360;
+            update_direction(6);
+            car3.x -= 4;
+        }
+
+        if (car3.y <= 80) {
+            direction[6] += 90;
+            direction[6] %= 360;
+            update_direction(6);
+            car3.y += 4;
+        }
+
+        if (car3.y >= 560) {
+            direction[6] += 90;
+            direction[6] %= 360;
+            update_direction(6);
+            car3.y -= 4;
+        }
+        //car4
+        if (movable[7]) {//若处于运动状态，则根据方向进行运动
+            if (direction[7] == 0) car4.y -= MoveSpeed;
+            if (direction[7] == 90) car4.x += MoveSpeed;
+            if (direction[7] == 180) car4.y += MoveSpeed;
+            if (direction[7] == 270) car4.x -= MoveSpeed;
+        }
+
+        if (car4.x <= 85) {
+            direction[7] += 90;
+            direction[7] %= 360;
+            update_direction(7);//更新当前对象（第8个）朝向
+            car4.x += 4;
+        }
+
+        if (car4.x >= 875) {
+            direction[7] += 90;
+            direction[7] %= 360;
+            update_direction(7);
+            car4.x -= 4;
+        }
+
+        if (car4.y <= 80) {
+            direction[7] += 90;
+            direction[7] %= 360;
+            update_direction(7);
+            car4.y += 4;
+        }
+
+        if (car4.y >= 560) {
+            direction[7] += 90;
+            direction[7] %= 360;
+            update_direction(7);
+            car4.y -= 4;
+        }
+        //补全碰到其他对象的情况(game over)
+        //补全计分板
+        //补全进度条加载动画
     }
 
-    //people1.x += 0;//这里写每个精灵对象的位置操作 在很小的时间间隔内执行一次这个函数
-
-    const MoveSpeed = 2;//默认移动速度为2
-
-    if (movable[0]) {//若处于运动状态，则根据方向进行运动
-        if (direction[0] == 0) people0.y -= MoveSpeed;
-        if (direction[0] == 90) people0.x += MoveSpeed;
-        if (direction[0] == 180) people0.y += MoveSpeed;
-        if (direction[0] == 270) people0.x -= MoveSpeed;
-    }
-
-    if (people0.x <= 85) {
-        direction[0] += 90;
-        direction[0] %= 360;
-        update_direction(0);
-        people0.x += 3;
-        
-    }//补全碰到其他边界和其他对象的情况
-    //补全其他对象的运动检测判断
 }
