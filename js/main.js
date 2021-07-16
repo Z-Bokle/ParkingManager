@@ -13,6 +13,18 @@ function abs(j)
 }
 //引入Math对象使用Math.abs()能达到一样的效果
 
+function change_en(index) {
+    if (index == 0) {
+        enabled = false;
+        button2.visible = true;
+        button1.visible = false;
+    }
+    else {
+        enabled = true;
+        button1.visible = true;
+        button2.visible = false;
+    }
+}
 
 function reset_direction(iter)//更新第iter个元素的方向  仅能更改为上下左右
 {
@@ -90,6 +102,9 @@ let direction = [ 0, 0, 0, 0, 0, 0, 0, 0];
 //使用预定义的Array对象中的构造函数创建名为buttons的长度为8的数组用于存放
 
 let movable = [false, false, false, false, false, false, false, false];
+
+var text;
+let point = 0;
 
 function create() {
     this.add.image(480, 320, 'bg');//x:155-805   y:150-650
@@ -216,7 +231,9 @@ function create() {
     //buttons[7].angle = direction[7];
 
     //ptr = this.add.sprite(480, 320, 'ptr');
-    
+
+    text = this.add.text(50, 10, '', { fill: '#000000' });
+
 }
 
 
@@ -224,6 +241,39 @@ function create() {
 function update(time, delta) {
     var pointer = this.input.activePointer;
     var x = pointer.worldX, y = pointer.worldY;
+
+    text.setText('Point:' + point);
+    if (abs(people0.x - people1.x) <= 20 && abs(people0.y - people1.y) <= 20
+        || abs(people0.x - people2.x) <= 20 && abs(people0.y - people2.y) <= 20
+        || abs(people0.x - people3.x) <= 20 && abs(people0.y - people3.y) <= 20
+        || abs(people1.x - people2.x) <= 20 && abs(people1.y - people2.y) <= 20
+        || abs(people1.x - people3.x) <= 20 && abs(people1.y - people3.y) <= 20
+        || abs(people2.x - people3.x) <= 20 && abs(people2.y - people3.y) <= 20)
+        alert("游戏结束");
+    if (abs(car1.x - car2.x) <= 50 && abs(car1.y - car2.y) <= 50
+        || abs(car1.x - car3.x) <= 50 && abs(car1.y - car3.y) <= 50
+        || abs(car1.x - car4.x) <= 50 && abs(car1.y - car4.y) <= 50
+        || abs(car2.x - car3.x) <= 50 && abs(car2.y - car3.y) <= 50
+        || abs(car2.x - car4.x) <= 50 && abs(car2.y - car4.y) <= 50
+        || abs(car3.x - car4.x) <= 50 && abs(car3.y - car4.y) <= 50)
+        alert("游戏结束");
+    if (abs(people0.x - car1.x) <= 20 && abs(people0.y - car1.y) <= 20
+        || abs(people0.x - car2.x) <= 20 && abs(people0.y - car2.y) <= 20
+        || abs(people0.x - car3.x) <= 20 && abs(people0.y - car3.y) <= 20
+        || abs(people0.x - car4.x) <= 20 && abs(people0.y - car4.y) <= 20
+        || abs(people1.x - car1.x) <= 20 && abs(people1.y - car1.y) <= 20
+        || abs(people1.x - car2.x) <= 20 && abs(people1.y - car2.y) <= 20
+        || abs(people1.x - car3.x) <= 20 && abs(people1.y - car3.y) <= 20
+        || abs(people1.x - car4.x) <= 20 && abs(people1.y - car4.y) <= 20
+        || abs(people2.x - car1.x) <= 20 && abs(people2.y - car1.y) <= 20
+        || abs(people2.x - car2.x) <= 20 && abs(people2.y - car2.y) <= 20
+        || abs(people2.x - car3.x) <= 20 && abs(people2.y - car3.y) <= 20
+        || abs(people2.x - car4.x) <= 20 && abs(people2.y - car4.y) <= 20
+        || abs(people3.x - car1.x) <= 20 && abs(people3.y - car1.y) <= 20
+        || abs(people3.x - car2.x) <= 20 && abs(people3.y - car2.y) <= 20
+        || abs(people3.x - car3.x) <= 20 && abs(people3.y - car3.y) <= 20
+        || abs(people3.x - car4.x) <= 20 && abs(people3.y - car4.y) <= 20)
+        alert("游戏结束");
     /*
     this.input.on('pointerdown', function (pointer) {
         this.input.mouse.requestPointerLock();
@@ -258,27 +308,97 @@ function update(time, delta) {
             else { ptr.setRotation(0); }
         }//光标跟随和边界循环处理
     */
+    if (abs(x - button1.x) < button1.width / 2 && abs(y - button1.y) < button1.height / 2 && pointer.isDown) {
+        if (enabled == true) {
+            
+            setTimeout("change_en(0)", 250);
+            music.pause();
+            console.log('1111');
+            /*
+            var dt = new Date();
+            var sc0 = dt.getSeconds(),sc;
+            for (sc = dt.getSeconds(); sc == (sc0 + 2) % 60; sc = dt.getSeconds())
+                console.log('1111sc='+sc);
+            change_en(0);
+            */
+            //alert("游戏结束");
+        }
+        if (enabled == false) {
 
+            setTimeout("change_en(1)", 250);
+            music.play();
+            console.log('2222');
+            /*
+            var dt = new Date();
+            var sc0 = dt.getSeconds(), sc;
+            for (sc = dt.getSeconds(); sc == (sc0 + 2) % 60; sc = dt.getSeconds())
+                console.log('2222sc=' + sc);
+            change_en(1);
+            */
+
+        }
+    }
 
     if (enabled == true) {//未处于暂停状态
 
         if (pointer.isDown) {//监听鼠标的点击，同时判断出鼠标点击的对象
-            if (abs(x - people0.x) < people0.width / 2 && abs(y - people0.y) < people0.height / 2)
+            if (abs(x - people0.x) < people0.width / 2 && abs(y - people0.y) < people0.height / 2) {
                 movable[0] = true;
-            if (abs(x - people1.x) < people1.width / 2 && abs(y - people1.y) < people1.height / 2)
+                point = 0;
+                for (let i = 0; i < 8; i++)
+                    point += movable[i];
+            }
+                
+            if (abs(x - people1.x) < people1.width / 2 && abs(y - people1.y) < people1.height / 2) {
                 movable[1] = true;
-            if (abs(x - people2.x) < people2.width / 2 && abs(y - people2.y) < people2.height / 2)
+                point = 0;
+                for (let i = 0; i < 8; i++)
+                    point += movable[i];
+            }
+
+            if (abs(x - people2.x) < people2.width / 2 && abs(y - people2.y) < people2.height / 2) {
                 movable[2] = true;
-            if (abs(x - people3.x) < people3.width / 2 && abs(y - people3.y) < people3.height / 2)
+                point = 0;
+                for (let i = 0; i < 8; i++)
+                    point += movable[i];
+            }
+
+            if (abs(x - people3.x) < people3.width / 2 && abs(y - people3.y) < people3.height / 2) {
                 movable[3] = true;
-            if (abs(x - car1.x) < car1.width / 2 && abs(y - car1.y) < car1.height / 2)
+                point = 0;
+                for (let i = 0; i < 8; i++)
+                    point += movable[i];
+            }
+
+            if (abs(x - car1.x) < car1.width / 2 && abs(y - car1.y) < car1.height / 2) {
                 movable[4] = true;
-            if (abs(x - car2.x) < car2.width / 2 && abs(y - car2.y) < car2.height / 2)
+                point = 0;
+                for (let i = 0; i < 8; i++)
+                    point += movable[i];
+            }
+
+            if (abs(x - car2.x) < car2.width / 2 && abs(y - car2.y) < car2.height / 2) {
                 movable[5] = true;
-            if (abs(x - car3.x) < car3.width / 2 && abs(y - car3.y) < car3.height / 2)
+                point = 0;
+                for (let i = 0; i < 8; i++)
+                    point += movable[i];
+            }
+                
+            if (abs(x - car3.x) < car3.width / 2 && abs(y - car3.y) < car3.height / 2) {
                 movable[6] = true;
-            if (abs(x - car4.x) < car4.width / 2 && abs(y - car4.y) < car4.height / 2)
+                point = 0;
+                for (let i = 0; i < 8; i++)
+                    point += movable[i];
+            }
+
+            if (abs(x - car4.x) < car4.width / 2 && abs(y - car4.y) < car4.height / 2) {
                 movable[7] = true;
+                point = 0;
+                for (let i = 0; i < 8; i++)
+                    point += movable[i];
+            }
+
+            
         }
 
         //people1.x += 0;//这里写每个精灵对象的位置操作 在很小的时间间隔内执行一次这个函数
