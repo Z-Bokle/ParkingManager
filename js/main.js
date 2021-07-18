@@ -2,9 +2,13 @@
 
 
 
-
+var GameStop = false;
 var BroHeight = document.documentElement.clientHeight;
 var BroWidth = document.documentElement.clientWidth;
+
+function gstop() {
+    GameStop = true;
+}
 
 function abs(j)
 {
@@ -83,12 +87,14 @@ function preload() {
 
     //this.load.image('butp', './images/buttonp.png');
     //this.load.image('butc', './images/buttonc.png');
-
+    this.load.image('end', './images/end.png');
     this.load.image('but1', './images/button1.png');
     this.load.image('but2', './images/button2.png');
     this.load.image('ptr', './images/pointer.png');
 
-    this.load.audio('bgm', ['./sounds/bgm.mp3','./sounds/bgm.ogg']);
+    this.load.audio('crash', './sounds/crash.mp3');
+    this.load.audio('bgm', ['./sounds/bgm.mp3', './sounds/bgm.ogg']);
+    this.load.audio('yell', './sounds/yell.mp3');
 }
 
 var posx0, posy0, posx1, posy1, posx2, posy2, posx3, posy3,
@@ -102,8 +108,8 @@ let direction = [ 0, 0, 0, 0, 0, 0, 0, 0];
 //使用预定义的Array对象中的构造函数创建名为buttons的长度为8的数组用于存放
 
 let movable = [false, false, false, false, false, false, false, false];
-
-var text;
+var crash, yell;
+var text,endtext;
 let point = 0;
 
 function create() {
@@ -118,6 +124,10 @@ function create() {
     button1 = this.add.sprite(25, 25, 'but1');
     button2 = this.add.sprite(25, 25, 'but2');
     button2.visible = false;
+
+    crash = this.sound.add('crash');
+    yell = this.sound.add('yell');
+
     music = this.sound.add('bgm');
     music.play();
     posx0 = 480 + 320 * (Math.round(Math.random() * 1000) / 500 - 1);
@@ -242,21 +252,64 @@ function update(time, delta) {
     var pointer = this.input.activePointer;
     var x = pointer.worldX, y = pointer.worldY;
 
+    if (GameStop)
+        this.scene.stop();
+    console.log(car1.x);
+    console.log(car1.y);
+    if (point == 8 && ((people0.x < 155 || people0.x > 805) || (people0.y < 85 || people0.y > 555))
+        && ((people1.x < 155 || people1.x > 805) || (people1.y < 85 || people1.y > 555))
+        && ((people2.x < 155 || people2.x > 805) || (people2.y < 85 || people2.y > 555))
+        && ((people3.x < 155 || people3.x > 805) || (people3.y < 85 || people3.y > 555))
+        && ((car1.x < 155 || car1.x > 805) || (car1.y < 85 || car1.y > 555))
+        && ((car2.x < 155 || car2.x > 805) || (car2.y < 85 || car2.y > 555))
+        && ((car3.x < 155 || car3.x > 805) || (car3.y < 85 || car3.y > 555))
+        && ((car4.x < 155 || car4.x > 805) || (car4.y < 85 || car4.y > 555))) {//游戏胜利
+        this.add.image(480, 320, 'end');
+        endtext = this.add.text(300, 320, '', { fill: '#000000' });
+        endtext.setText('You win! Please reload game to restart.');
+        yell.play();
+        for (let i = 0; i < 8; i++)
+            movable[i] = false;
+        setTimeout('gstop()', 5000);
+    }
+
     text.setText('Point:' + point);
     if (abs(people0.x - people1.x) <= 20 && abs(people0.y - people1.y) <= 20
         || abs(people0.x - people2.x) <= 20 && abs(people0.y - people2.y) <= 20
         || abs(people0.x - people3.x) <= 20 && abs(people0.y - people3.y) <= 20
         || abs(people1.x - people2.x) <= 20 && abs(people1.y - people2.y) <= 20
         || abs(people1.x - people3.x) <= 20 && abs(people1.y - people3.y) <= 20
-        || abs(people2.x - people3.x) <= 20 && abs(people2.y - people3.y) <= 20)
-        alert("游戏结束");
+        || abs(people2.x - people3.x) <= 20 && abs(people2.y - people3.y) <= 20) {
+        music.pause();
+        crash.play();
+        console.log('Crashed!');
+        this.add.image(480, 320, 'end');
+        endtext = this.add.text(300, 320, '', { fill: '#000000' });
+        endtext.setText('You lose.Get ' + point + ' point(s).');
+        for (let i = 0; i < 8; i++)
+            movable[i] = false;
+        setTimeout('gstop()', 5000);
+
+        //alert("游戏结束");
+    }
+        
     if (abs(car1.x - car2.x) <= 50 && abs(car1.y - car2.y) <= 50
         || abs(car1.x - car3.x) <= 50 && abs(car1.y - car3.y) <= 50
         || abs(car1.x - car4.x) <= 50 && abs(car1.y - car4.y) <= 50
         || abs(car2.x - car3.x) <= 50 && abs(car2.y - car3.y) <= 50
         || abs(car2.x - car4.x) <= 50 && abs(car2.y - car4.y) <= 50
-        || abs(car3.x - car4.x) <= 50 && abs(car3.y - car4.y) <= 50)
-        alert("游戏结束");
+        || abs(car3.x - car4.x) <= 50 && abs(car3.y - car4.y) <= 50) {
+        music.pause();
+        crash.play();
+        console.log('Crashed!');
+        this.add.image(480, 320, 'end');
+        endtext = this.add.text(300, 320, '', { fill: '#000000' });
+        endtext.setText('You lose.Get ' + point + ' point(s).');
+        for (let i = 0; i < 8; i++)
+            movable[i] = false;
+        setTimeout('gstop()', 5000);
+        //alert("游戏结束");
+    }
     if (abs(people0.x - car1.x) <= 20 && abs(people0.y - car1.y) <= 20
         || abs(people0.x - car2.x) <= 20 && abs(people0.y - car2.y) <= 20
         || abs(people0.x - car3.x) <= 20 && abs(people0.y - car3.y) <= 20
@@ -272,8 +325,19 @@ function update(time, delta) {
         || abs(people3.x - car1.x) <= 20 && abs(people3.y - car1.y) <= 20
         || abs(people3.x - car2.x) <= 20 && abs(people3.y - car2.y) <= 20
         || abs(people3.x - car3.x) <= 20 && abs(people3.y - car3.y) <= 20
-        || abs(people3.x - car4.x) <= 20 && abs(people3.y - car4.y) <= 20)
-        alert("游戏结束");
+        || abs(people3.x - car4.x) <= 20 && abs(people3.y - car4.y) <= 20) {
+        music.pause();
+        crash.play();
+        console.log('Crashed!');
+        this.add.image(480, 320, 'end');
+        endtext = this.add.text(300, 320, '', { fill: '#000000' });
+        endtext.setText('You lose.Get ' + point + ' point(s).');
+        for (let i = 0; i < 8; i++)
+            movable[i] = false;
+        setTimeout('gstop()', 5000);
+        
+        //alert("游戏结束");
+    }
     /*
     this.input.on('pointerdown', function (pointer) {
         this.input.mouse.requestPointerLock();
@@ -685,7 +749,6 @@ function update(time, delta) {
             car4.y -= 4;
         }
         //补全碰到其他对象的情况(game over)
-        //补全计分板
         //补全进度条加载动画
     }
 
