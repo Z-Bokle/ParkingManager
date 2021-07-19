@@ -268,6 +268,7 @@ function update(time, delta) {
         endtext = this.add.text(300, 320, '', { fill: '#000000' });
         endtext.setText('You win! Please reload game to restart.');
         yell.play();
+        music.pause();
         for (let i = 0; i < 8; i++)
             movable[i] = false;
         setTimeout('gstop()', 5000);
